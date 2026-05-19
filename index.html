@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GHOST-PATH v1.0</title>
+    <style>
+        body {
+            background-color: #050505;
+            color: #00ffcc;
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            color: #00ffcc;
+            text-shadow: 0 0 10px #00ffcc;
+            font-size: 1.5rem;
+            margin-bottom: 25px;
+            letter-spacing: 2px;
+        }
+
+        .keyboard {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-width: 600px;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .row {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .key {
+            border: 1px solid #00ffcc;
+            background: transparent;
+            color: #00ffcc;
+            padding: 12px;
+            min-width: 35px;
+            text-align: center;
+            border-radius: 3px;
+            cursor: pointer;
+            box-shadow: 0 0 5px rgba(0, 255, 204, 0.2);
+            transition: all 0.1s ease;
+            font-weight: bold;
+        }
+
+        .key:active {
+            background: #00ffcc;
+            color: #000;
+            box-shadow: 0 0 15px #00ffcc;
+        }
+
+        .output-container {
+            width: 100%;
+            max-width: 500px;
+            background: #ff00aa;
+            border: 2px solid #ff00aa;
+            box-shadow: 0 0 20px #ff00aa;
+            padding: 15px;
+            text-align: center;
+            margin-bottom: 20px;
+            box-sizing: border-box;
+        }
+
+        #output {
+            color: #ffffff;
+            font-size: 1.2rem;
+            font-weight: bold;
+            letter-spacing: 2px;
+            min-height: 24px;
+            word-break: break-all;
+        }
+
+        .control-btn {
+            border: 1px solid #00ffcc;
+            background: transparent;
+            color: #00ffcc;
+            padding: 12px;
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+            margin-bottom: 15px;
+            cursor: pointer;
+            letter-spacing: 2px;
+            box-sizing: border-box;
+        }
+
+        .control-btn:active {
+            background: #00ffcc;
+            color: #000;
+        }
+
+        .footer-text {
+            color: #00ffcc;
+            font-size: 0.8rem;
+            margin-top: 20px;
+            letter-spacing: 1px;
+            opacity: 0.8;
+        }
+
+        .slogan {
+            font-size: 1.3rem;
+            margin-top: 30px;
+            letter-spacing: 3px;
+            text-shadow: 0 0 8px #00ffcc;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>GHOST-PATH v1.0</h1>
+
+    <!-- Keyboard Layout -->
+    <div class="keyboard">
+        <div class="row">
+            <div class="key" onclick="press('Q')">Q</div><div class="key" onclick="press('W')">W</div><div class="key" onclick="press('E')">E</div><div class="key" onclick="press('R')">R</div><div class="key" onclick="press('T')">T</div><div class="key" onclick="press('Y')">Y</div><div class="key" onclick="press('U')">U</div><div class="key" onclick="press('I')">I</div><div class="key" onclick="press('O')">O</div><div class="key" onclick="press('P')">P</div>
+        </div>
+        <div class="row">
+            <div class="key" onclick="press('A')">A</div><div class="key" onclick="press('S')">S</div><div class="key" onclick="press('D')">D</div><div class="key" onclick="press('F')">F</div><div class="key" onclick="press('G')">G</div><div class="key" onclick="press('H')">H</div><div class="key" onclick="press('J')">J</div><div class="key" onclick="press('K')">K</div><div class="key" onclick="press('L')">L</div>
+        </div>
+        <div class="row">
+            <div class="key" onclick="press('Z')">Z</div><div class="key" onclick="press('X')">X</div><div class="key" onclick="press('C')">C</div><div class="key" onclick="press('V')">V</div><div class="key" onclick="press('B')">B</div><div class="key" onclick="press('N')">N</div><div class="key" onclick="press('M')">M</div>
+        </div>
+    </div>
+
+    <!-- Neon Pink Output Box -->
+    <div class="output-container">
+        <div id="output">1010</div>
+    </div>
+
+    <!-- Controls -->
+    <div class="control-btn" onclick="press(' ')">SPACE</div>
+    <div class="control-btn" onclick="clearOutput()" style="max-width: 100px;">CLEAR</div>
+
+    <div class="footer-text" id="status">> THIS IS THE OUTPUT FIELD</div>
+    
+    <div class="slogan">RESISTANCE IS FERTILE</div>
+
+    <script>
+        let outputDiv = document.getElementById('output');
+        let statusDiv = document.getElementById('status');
+        let currentText = "1010"; // Default starting text from your image
+
+        function press(char) {
+            // Reset placeholder text on first real type
+            if (currentText === "1010") { currentText = ""; }
+            currentText += char;
+            outputDiv.innerText = currentText;
+        }
+
+        function clearOutput() {
+            currentText = "";
+            outputDiv.innerText = "";
+            statusDiv.innerText = "> TERMINAL CLEARED";
+        }
+
+        // --- THE AI PIPELINE TRIGGER ---
+        // Pressing Enter on physical keyboard or triggers transmitting
+        window.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                transmitToAI(currentText);
+            }
+        });
+
+        async function transmitToAI(message) {
+            statusDiv.innerText = "> TRANSMITTING DATA TO GHOST...";
+            
+            try {
+                // This fetches the response from a secure backend helper server
+                // preventing your raw API key from being stolen by public users
+                let response = await fetch('https://repl.co', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: message })
+                });
+                
+                let data = await response.json();
+                simulateTyping(data.reply);
+            } catch (err) {
+                statusDiv.innerText = "> ERROR: TRANSMISSION INTERRUPTED";
+            }
+        }
+
+        function simulateTyping(text) {
+            currentText = "";
+            outputDiv.innerText = "";
+            let i = 0;
+            statusDiv.innerText = "> INCOMING TRANSMISSION...";
+            
+            // Types out letter-by-letter automatically on your pink screen
+            let interval = setInterval(() => {
+                if (i < text.length) {
+                    currentText += text.charAt(i).toUpperCase();
+                    outputDiv.innerText = currentText;
+                    i++;
+                } else {
+                    clearInterval(interval);
+                    statusDiv.innerText = "> TRANSMISSION COMPLETE";
+                }
+            }, 100); // Speed of typing (100ms per letter)
+        }
+    </script>
+</body>
+          </html>
+          
