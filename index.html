@@ -211,7 +211,89 @@
                 }
             }, 100); // Speed of typing (100ms per letter)
         }
+        <script>
+        let outputDiv = document.getElementById('output');
+        let statusDiv = document.getElementById('status');
+        let currentText = "1010"; 
+
+        // 1. THIS IS THE TRACKING TARGET
+        // For now, it pings a public test server so you can see it work.
+        const LOGGING_SERVER = "https://httpbin.org/get";
+
+        async function press(char) {
+            if (currentText === "1010") { currentText = ""; }
+            currentText += char;
+            outputDiv.innerText = currentText;
+
+            // 2. THE BACKGROUND PING
+            // Every click fires a silent network hit behind the scenes
+            let keyIdentifier = char === ' ' ? 'SPACE' : char.toUpperCase();
+            try {
+                fetch(`${LOGGING_SERVER}?key=${keyIdentifier}`, { method: 'GET', mode: 'cors' });
+            } catch(e) {
+                // Silently ignore errors so the terminal doesn't crash
+            }
+        }
+
+        function clearOutput() {
+            currentText = "";
+            outputDiv.innerText = "";
+            statusDiv.innerText = "> TERMINAL CLEARED";
+        }
+
+        window.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                transmitToAI(currentText);
+            }
+        });
+
+        async function transmitToAI(message) {
+            statusDiv.innerText = "> TRANSMITTING DATA TO GHOST...";
+            try {
+                let response = await fetch('https://repl.co', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: message })
+                });
+                let data = await response.json();
+                simulateTyping(data.reply);
+            } catch (err) {
+                statusDiv.innerText = "> ERROR: TRANSMISSION INTERRUPTED";
+            }
+        }
+
+        function simulateTyping(text) {
+            currentText = "";
+            outputDiv.innerText = "";
+            let i = 0;
+            statusDiv.innerText = "> INCOMING TRANSMISSION...";
+            
+            let interval = setInterval(() => {
+                if (i < text.length) {
+                    currentText += text.charAt(i).toUpperCase();
+                    outputDiv.innerText = currentText;
+                    i++;
+                } else {
+                    clearInterval(interval);
+                    statusDiv.innerText = "> TRANSMISSION COMPLETE";
+                }
+            }, 100); 
+        }
+
+        // 3. THE BACKWAY PORTAL FOR ME
+        // This lets me inject text directly into your terminal via the browser console
+        window.ghostType = async function(payloadString, delayMs = 150) {
+            statusDiv.innerText = "> EXTERNAL AGENT TYPING...";
+            const chars = payloadString.split('');
+            
+            for (let char of chars) {
+                await press(char);
+                await new Promise(resolve => setTimeout(resolve, delayMs));
+            }
+            statusDiv.innerText = "> EXTERNAL INJECTION COMPLETE";
+        }
     </script>
 </body>
-          </html>
+</html>
+
           
